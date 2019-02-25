@@ -20,10 +20,13 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
+	// Þegar við gerum static þá deilum við henni á milli þráða
+	public static Semaphore sem;
+
 	ArrayList<Integer> personCount; //use if you want but
-									//throw away and
-									//implement differently
-									//if it suits you
+	//throw away and
+	//implement differently
+	//if it suits you
 	ArrayList<Integer> exitedCount = null;
 	public static Semaphore exitedCountMutex;
 
@@ -31,15 +34,38 @@ public class ElevatorScene {
 	//Necessary to add your code in this one
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
 
+
+		sem = new Semaphore(0);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				for(int i = 0; i < 20; i++) {
+					sem.release();
+					System.out.println("Permits " + sem.availablePermits() );
+				}
+			}
+		}).start();
+
 		/**
 		 * Important to add code here to make new
 		 * threads that run your elevator-runnables
-		 * 
+		 *
 		 * Also add any other code that initializes
 		 * your system for a new run
-		 * 
+		 *
 		 * If you can, tell any currently running
 		 * elevator threads to stop
+		 */
+
+		/* Ef við erum með kerfi sem á að vera með 10 lyftum, þá vitum
+			við það í upphafi. Viljum búa til lyftuþræðina í restart scene.
+
+			Búum ekki til fólkið hér því það getur komið og farið eins og
+			því hentar.
+
+			Munum líklega vilja byrja á því að búa til klasa fyrir Person og Elevator því það er sérþráður fyrir hvert tilvik.
 		 */
 
 		this.numberOfFloors = numberOfFloors;
@@ -66,14 +92,21 @@ public class ElevatorScene {
 	//Necessary to add your code in this one
 	public Thread addPerson(int sourceFloor, int destinationFloor) {
 
+		Person person = new Person(sourceFloor, destinationFloor);
+		Thread personThread = new Thread(person);
+
+		personThread.start();
+
 		/**
 		 * Important to add code here to make a
 		 * new thread that runs your person-runnable
-		 * 
+		 *
 		 * Also return the Thread object for your person
 		 * so that it can be reaped in the testSuite
 		 * (you don't have to join() yourself)
 		 */
+
+		//Hér á að búa til nýjan þráð af týpunni Person
 
 		//dumb code, replace it!
 		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
@@ -89,12 +122,12 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
-		
+
 		//dumb code, replace it!
 		switch(elevator) {
-		case 1: return 1;
-		case 2: return 4;
-		default: return 3;
+			case 1: return 1;
+			case 2: return 4;
+			default: return 3;
 		}
 	}
 
@@ -144,7 +177,7 @@ public class ElevatorScene {
 	//but before it finishes its run.
 	public void personExitsAtFloor(int floor) {
 		try {
-			
+
 			exitedCountMutex.acquire();
 			exitedCount.set(floor, (exitedCount.get(floor) + 1));
 			exitedCountMutex.release();

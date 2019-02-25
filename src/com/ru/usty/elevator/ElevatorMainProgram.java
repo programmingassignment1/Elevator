@@ -17,10 +17,10 @@ public class ElevatorMainProgram {
 
 			Thread.sleep(2000);
 
-		//	for(int i = 0; i <= 9; i++) {
-		//		TestSuite.runTest(i);
-		//		Thread.sleep(2000);
-		//	}
+			//	for(int i = 0; i <= 9; i++) {
+			//		TestSuite.runTest(i);
+			//		Thread.sleep(2000);
+			//	}
 
 /*************************************************************/
 
@@ -28,7 +28,7 @@ public class ElevatorMainProgram {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		//System.exit(0);
 	}
 }
