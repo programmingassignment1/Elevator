@@ -34,6 +34,7 @@ public class Elevator implements Runnable {
                 currFloor--;
             }
             ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+            //ElevatorScene.scene.inSem.release();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {

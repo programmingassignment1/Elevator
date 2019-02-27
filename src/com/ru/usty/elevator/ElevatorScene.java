@@ -36,8 +36,10 @@ public class ElevatorScene {
 	// Þegar við gerum static þá deilum við henni á milli þráða
 	//public static Semaphore sem;
 
-	ArrayList<Semaphore> inSem;
-	ArrayList<Semaphore> outSem;
+	//ArrayList<Semaphore> inSem;
+	//ArrayList<Semaphore> outSem;
+
+	public static Semaphore inSem;
 
 	ArrayList<Thread> elevatorThreads;
 	public ArrayList<Integer> currentFloorForElevator;
@@ -57,6 +59,14 @@ public class ElevatorScene {
 		 * If you can, tell any currently running
 		 * elevator threads to stop
 		 */
+
+		for(int i = 0; i < getNumberOfElevators(); i++) {
+			try {
+				elevatorThreads.get(i).join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
@@ -110,6 +120,7 @@ public class ElevatorScene {
 
 		personThread.start();
 
+		// passa mutex
 		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
 
 		return personThread;
@@ -117,7 +128,6 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elevator) {
-
 		return currentFloorForElevator.get(elevator);
 	}
 
