@@ -14,7 +14,16 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("ELEVATOR");
+       while(true) {
+           if (ElevatorScene.elevatorsMayDie) {
+               return;
+           }
+
+           for (int i = 0; i < 10; i++) {
+               ElevatorScene.sem.release();
+           }
+
+        /*System.out.println("ELEVATOR");
         while(true) {
             try {
                 Thread.sleep(500);
@@ -39,6 +48,8 @@ public class Elevator implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
+       }
+
     }
 }
