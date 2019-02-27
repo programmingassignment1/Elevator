@@ -13,9 +13,6 @@ public class Person implements Runnable {
     @Override
     public void run() {
 
-
-
-
        try {
            // Hér er verið að bíða á ákveðinni semph. Ef við biðum á
            // Réttri semoph., og hún hleypir okkur inn á réttri hæð,

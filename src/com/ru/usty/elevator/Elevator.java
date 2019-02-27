@@ -18,38 +18,35 @@ public class Elevator implements Runnable {
            if (ElevatorScene.elevatorsMayDie) {
                return;
            }
+           /*try {
+               Thread.sleep(500);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+           if(currFloor == 0) {
+               isGoingUp = true;
+           }
+           else if(numberOfFloors - 1 == currFloor) {
+               isGoingUp = false;
+           }
+           if(isGoingUp) {
+               currFloor++;
+           }
+           else {
+               currFloor--;
+           }
+           ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+           //ElevatorScene.scene.inSem.release();
+           try {
+               Thread.sleep(500);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }*/
+
 
            for (int i = 0; i < 10; i++) {
                ElevatorScene.sem.release();
            }
-
-        /*System.out.println("ELEVATOR");
-        while(true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if(currFloor == 0) {
-                isGoingUp = true;
-            }
-            else if(numberOfFloors - 1 == currFloor) {
-                isGoingUp = false;
-            }
-            if(isGoingUp) {
-                currFloor++;
-            }
-            else {
-                currFloor--;
-            }
-            ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
-            //ElevatorScene.scene.inSem.release();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
        }
 
     }
