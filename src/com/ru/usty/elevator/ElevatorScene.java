@@ -20,33 +20,32 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
-	// Þegar við gerum static þá deilum við henni á milli þráða
-	public static Semaphore sem;
+	// instance of ElevatorScene
+	public static ElevatorScene scene;
 
+	// fylki sem heldur utan um hversu margar personur eru a hverri hæð
 	ArrayList<Integer> personCount; //use if you want but
-	//throw away and
-	//implement differently
-	//if it suits you
+									//throw away and
+									//implement differently
+									//if it suits you
+	// heldur utan um hversu margir exituðu á hverri hæð
 	ArrayList<Integer> exitedCount = null;
+
 	public static Semaphore exitedCountMutex;
+
+	// Þegar við gerum static þá deilum við henni á milli þráða
+	//public static Semaphore sem;
+
+	ArrayList<Semaphore> inSem;
+	ArrayList<Semaphore> outSem;
+
+	ArrayList<Thread> elevatorThreads;
+	public ArrayList<Integer> currentFloorForElevator;
+	//ArrayList<Integer> numberOfPeopleInElevator;
 
 	//Base function: definition must not change
 	//Necessary to add your code in this one
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
-
-
-		sem = new Semaphore(0);
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-
-				for(int i = 0; i < 20; i++) {
-					sem.release();
-					System.out.println("Permits " + sem.availablePermits() );
-				}
-			}
-		}).start();
 
 		/**
 		 * Important to add code here to make new
@@ -59,20 +58,34 @@ public class ElevatorScene {
 		 * elevator threads to stop
 		 */
 
-		/* Ef við erum með kerfi sem á að vera með 10 lyftum, þá vitum
-			við það í upphafi. Viljum búa til lyftuþræðina í restart scene.
-
-			Búum ekki til fólkið hér því það getur komið og farið eins og
-			því hentar.
-
-			Munum líklega vilja byrja á því að búa til klasa fyrir Person og Elevator því það er sérþráður fyrir hvert tilvik.
-		 */
-
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 
+		/***/
+
+		// initialize the instance of ElevatorScene
+		scene = this;
+
+		currentFloorForElevator = new ArrayList<Integer>();
+		elevatorThreads = new ArrayList<Thread>();
+
+		for(int i = 0; i < getNumberOfElevators(); i++) {
+			this.currentFloorForElevator.add(0);
+			Elevator elevator = new Elevator(getNumberOfFloors());
+			Thread elevatorThread = new Thread(elevator);
+			elevatorThreads.add(elevatorThread);
+			elevatorThreads.get(i).start();
+		}
+
+		/*
+		numberOfPeopleInElevator = new ArrayList<Integer>();
+		for(int i = 0; i < getNumberOfElevators(); i++) {
+			this.numberOfPeopleInElevator.add(0);
+		}*/
+
+
 		personCount = new ArrayList<Integer>();
-		for(int i = 0; i < numberOfFloors; i++) {
+		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.personCount.add(0);
 		}
 
@@ -97,38 +110,22 @@ public class ElevatorScene {
 
 		personThread.start();
 
-		/**
-		 * Important to add code here to make a
-		 * new thread that runs your person-runnable
-		 *
-		 * Also return the Thread object for your person
-		 * so that it can be reaped in the testSuite
-		 * (you don't have to join() yourself)
-		 */
-
-		//Hér á að búa til nýjan þráð af týpunni Person
-
-		//dumb code, replace it!
 		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
-		return null;  //this means that the testSuite will not wait for the threads to finish
+
+		return personThread;
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elevator) {
 
-		//dumb code, replace it!
-		return 1;
+		return currentFloorForElevator.get(elevator);
 	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
 
-		//dumb code, replace it!
-		switch(elevator) {
-			case 1: return 1;
-			case 2: return 4;
-			default: return 3;
-		}
+		return 1;
+		//return numberOfPeopleInElevator.get(elevator);
 	}
 
 	//Base function: definition must not change, but add your code

@@ -2,7 +2,7 @@ package com.ru.usty.elevator;
 
 public class Person implements Runnable {
 
-    int source, dest;
+    private int source, dest;
 
     Person(int source, int dest) {
 
@@ -13,12 +13,13 @@ public class Person implements Runnable {
     @Override
     public void run() {
 
+        /*
         try {
             ElevatorScene.sem.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Person thread");
+        System.out.println("Person thread");*/
     }
 }
 
