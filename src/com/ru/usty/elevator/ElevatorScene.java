@@ -20,24 +20,40 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
+	private Thread elevatorThread = null;
+
 	// instance of ElevatorScene
 	public static ElevatorScene scene;
 
+	public static boolean elevatorsMayDie;
+
 	// fylki sem heldur utan um hversu margar personur eru a hverri hæð
-	ArrayList<Integer> personCount; //use if you want but
-									//throw away and
-									//implement differently
-									//if it suits you
+	ArrayList<Integer> personCount; //use if you want but throw away and implement differently if it suits you
+
 	// heldur utan um hversu margir exituðu á hverri hæð
 	ArrayList<Integer> exitedCount = null;
 
+	////// ****** ALLT Í LAGI AÐ HAFA ALLAR SEMPHORUR HÉR (KÁRI) ***** ////
+
 	public static Semaphore exitedCountMutex;
 
-	// Þegar við gerum static þá deilum við henni á milli þráða
-	//public static Semaphore sem;
+	// Þessi breyta er fyrir Mutual Exclusion í personCount
+	// Það er líka til sérklasi fyrir binary semaphores (segir Kári)
+	public static Semaphore personCountMutex;
 
-	ArrayList<Semaphore> inSem;
+	public static Semaphore elevatorWaitMutex;
+
+	// Þegar við gerum static þá deilum við henni á milli þráða
+	// Þessi semaphora er núna aðgengileg hvaða sem er frá.
+	// Mjög líklegt að við þurfum bara að nota þessa semaphoru inni
+	// í ElevatorScene og því líklegt að við mættum hafa hana sem private
+	// tilviksbreytu hér í ElevatorScene
+	public static Semaphore sem;
+
+	/*ArrayList<Semaphore> inSem;
 	ArrayList<Semaphore> outSem;
+	ArrayList<Semaphore> floorSem;*/
+
 
 	ArrayList<Thread> elevatorThreads;
 	public ArrayList<Integer> currentFloorForElevator;
@@ -47,6 +63,40 @@ public class ElevatorScene {
 	//Necessary to add your code in this one
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
 
+		elevatorsMayDie = true;
+
+		currentFloorForElevator = new ArrayList<Integer>();
+		elevatorThreads = new ArrayList<Thread>();
+
+		for(int i = 0; i < getNumberOfElevators(); i++) {
+			if (elevatorThreads.get(i) != null) {
+				if (elevatorThreads.get(i).isAlive()) {
+					try {
+						elevatorThreads.get(i).join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		elevatorsMayDie = false;
+
+
+		// initialize the instance of ElevatorScene
+		scene = this;
+
+		// Þessi semaphora er núna læst í upphafi.
+		sem = new Semaphore(0);
+
+		// Stillt á einn => Fyrsti sem kallar á wait() á henni kemst í gegn
+		// Hann mun svo setja hana aftur niður í núll þegar hann er búinn
+		// Og því kemst næsti ekki inn aftur fyrr en hann er búinn --> Mutual exclusion
+		personCountMutex = new Semaphore(1);
+		elevatorWaitMutex = new Semaphore(1);
+		exitedCountMutex = new Semaphore(1);
+
+		elevatorsMayDie = false;
 		/**
 		 * Important to add code here to make new
 		 * threads that run your elevator-runnables
@@ -61,13 +111,7 @@ public class ElevatorScene {
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 
-		/***/
 
-		// initialize the instance of ElevatorScene
-		scene = this;
-
-		currentFloorForElevator = new ArrayList<Integer>();
-		elevatorThreads = new ArrayList<Thread>();
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			this.currentFloorForElevator.add(0);
@@ -76,6 +120,7 @@ public class ElevatorScene {
 			elevatorThreads.add(elevatorThread);
 			elevatorThreads.get(i).start();
 		}
+
 
 		/*
 		numberOfPeopleInElevator = new ArrayList<Integer>();
@@ -98,7 +143,9 @@ public class ElevatorScene {
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.exitedCount.add(0);
 		}
-		exitedCountMutex = new Semaphore(1);
+
+
+
 	}
 
 	//Base function: definition must not change
@@ -110,7 +157,7 @@ public class ElevatorScene {
 
 		personThread.start();
 
-		personCount.set(sourceFloor, personCount.get(sourceFloor) + 1);
+		incrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
 		return personThread;
 	}
@@ -128,10 +175,37 @@ public class ElevatorScene {
 		//return numberOfPeopleInElevator.get(elevator);
 	}
 
+
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleWaitingAtFloor(int floor) {
 
 		return personCount.get(floor);
+	}
+
+	public void decrementNumberOfPeopleWaitingAtFloor(int floor) {
+
+		// Spurning: Er nóg einn mutex hér eða þarf einn per hæð?
+
+		try {
+			ElevatorScene.personCountMutex.acquire();
+			personCount.set(floor, (personCount.get(floor) -1));
+			ElevatorScene.personCountMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void incrementNumberOfPeopleWaitingAtFloor(int floor) {
+
+		// Spurning: Er nóg einn mutex hér eða þarf einn per hæð?
+
+		try {
+			ElevatorScene.personCountMutex.acquire();
+			personCount.set(floor, (personCount.get(floor) +1));
+			ElevatorScene.personCountMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//Base function: definition must not change, but add your code if needed
@@ -175,9 +249,9 @@ public class ElevatorScene {
 	public void personExitsAtFloor(int floor) {
 		try {
 
-			exitedCountMutex.acquire();
+			ElevatorScene.exitedCountMutex.acquire();
 			exitedCount.set(floor, (exitedCount.get(floor) + 1));
-			exitedCountMutex.release();
+			ElevatorScene.exitedCountMutex.release();
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
