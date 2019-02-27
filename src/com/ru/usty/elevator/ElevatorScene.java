@@ -20,6 +20,8 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
+	public int maxNumberOfPeopleInElevator = 6;
+
 	// instance of ElevatorScene
 	public static ElevatorScene scene;
 
@@ -40,19 +42,19 @@ public class ElevatorScene {
 	public static Semaphore personCountMutex;
 
 	public static Semaphore elevatorWaitMutex;
+	public static Semaphore numberOfPeopleInElevatorMutex;
 
 	// Þegar við gerum static þá deilum við henni á milli þráða
 	// Þessi semaphora er núna aðgengileg hvaða sem er frá.
 	// Mjög líklegt að við þurfum bara að nota þessa semaphoru inni
 	// í ElevatorScene og því líklegt að við mættum hafa hana sem private
 	// tilviksbreytu hér í ElevatorScene
-	public static Semaphore sem;
-
 	public static Semaphore inSem;
 
 	/*ArrayList<Semaphore> inSem;
 	ArrayList<Semaphore> outSem;
 	ArrayList<Semaphore> floorSem;*/
+
 
 	ArrayList<Thread> elevatorThreads;
 	public ArrayList<Integer> currentFloorForElevator;
@@ -83,12 +85,11 @@ public class ElevatorScene {
 
 		elevatorsMayDie = false;
 
-
 		// initialize the instance of ElevatorScene
 		scene = this;
 
 		// Þessi semaphora er núna læst í upphafi.
-		sem = new Semaphore(0);
+		inSem = new Semaphore(0);
 
 		// Stillt á einn => Fyrsti sem kallar á wait() á henni kemst í gegn
 		// Hann mun svo setja hana aftur niður í núll þegar hann er búinn
@@ -96,8 +97,9 @@ public class ElevatorScene {
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
+		numberOfPeopleInElevatorMutex = new Semaphore(1);
 
-		elevatorsMayDie = false;
+		//elevatorsMayDie = false;
 		/**
 		 * Important to add code here to make new
 		 * threads that run your elevator-runnables
@@ -111,14 +113,6 @@ public class ElevatorScene {
 
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
-
-		for(int i = 0; i < getNumberOfElevators(); i++) {
-			try {
-				elevatorThreads.get(i).join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			this.currentFloorForElevator.add(0);
@@ -161,6 +155,7 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elevator) {
+
 		return currentFloorForElevator.get(elevator);
 	}
 
@@ -170,6 +165,25 @@ public class ElevatorScene {
 		return numberOfPeopleInElevator.get(elevator);
 	}
 
+	public void incrementNumberOfPeopleInElevator(int elevator) {
+		try {
+			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) + 1);
+			ElevatorScene.numberOfPeopleInElevatorMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void decrementNumberOfPeopleInElevator(int elevator) {
+		try {
+			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) - 1);
+			ElevatorScene.numberOfPeopleInElevatorMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleWaitingAtFloor(int floor) {

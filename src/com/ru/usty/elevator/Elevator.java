@@ -14,40 +14,43 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-       while(true) {
-           if (ElevatorScene.elevatorsMayDie) {
-               return;
-           }
-           /*try {
-               Thread.sleep(500);
-           } catch (InterruptedException e) {
-               e.printStackTrace();
-           }
-           if(currFloor == 0) {
-               isGoingUp = true;
-           }
-           else if(numberOfFloors - 1 == currFloor) {
-               isGoingUp = false;
-           }
-           if(isGoingUp) {
-               currFloor++;
-           }
-           else {
-               currFloor--;
-           }
-           ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
-           //ElevatorScene.scene.inSem.release();
-           try {
-               Thread.sleep(500);
-           } catch (InterruptedException e) {
-               e.printStackTrace();
-           }*/
 
+        int temp = 0;
+        while(true) {
+            if (ElevatorScene.elevatorsMayDie) {
+                return;
+            }
 
-           for (int i = 0; i < 10; i++) {
-               ElevatorScene.sem.release();
-           }
-       }
+            temp = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(currFloor == 0) {
+                isGoingUp = true;
+            }
+            else if(numberOfFloors - 1 == currFloor) {
+                isGoingUp = false;
+            }
+            if(isGoingUp) {
+                currFloor++;
+            }
+            else {
+                currFloor--;
+            }
+            ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if(temp > 1){
+                ElevatorScene.inSem.release();
+            }
+        }
 
     }
 }
