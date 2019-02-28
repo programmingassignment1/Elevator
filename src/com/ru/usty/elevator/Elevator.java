@@ -20,34 +20,49 @@ public class Elevator implements Runnable {
                 return;
             }
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(0);
             int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
             if(currFloor == 0) {
                 isGoingUp = true;
-                currFloor++;
             }
             else if(numberOfFloors - 1 == currFloor) {
                 isGoingUp = false;
-                currFloor--;
             }
-            /*if(isGoingUp) {
+            if(isGoingUp) {
                 currFloor++;
             }
             else {
                 currFloor--;
-            }*/
+            }
+
+            // Farið á milli hæða
             ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+
             if(currFloor == 0) {
                 ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
                 // þarf lyftan að acquirea 6 - numberOfPeopleInElevator sinnum til að læsa semaphorunni?
             }
-            else if(numberOfFloors - 1 == currFloor) {
-                ElevatorScene.outSem.release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            else {
+                ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getDestinationFloors(currFloor));
+                System.out.println( ElevatorScene.scene.getDestinationFloors(0) + " " + ElevatorScene.scene.getDestinationFloors(1) + " " + ElevatorScene.scene.getDestinationFloors(2) + " " + ElevatorScene.scene.getDestinationFloors(3) );
+                ElevatorScene.scene.personDestination.set(currFloor, 0);
+                System.out.println("number of exited at floor " + currFloor + " " + ElevatorScene.scene.exitedCount);
+                try {
+                    ElevatorScene.outSem[currFloor].acquire(ElevatorScene.scene.getDestinationFloors(currFloor));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

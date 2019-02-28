@@ -85,22 +85,25 @@ public class Person implements Runnable {
 
         // Person is through barrier hér
 
-        // Minnkum við röðina
+
         ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
+        ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
+       // System.out.println("outsem: " + ElevatorScene.outSem.length);
 
 
         try {
             ElevatorScene.testMutex.acquire();
-                ElevatorScene.outSem.acquire(); // Wait
+                ElevatorScene.outSem[destinationFloor].acquire(); // Wait
             ElevatorScene.testMutex.release();
+
+            ElevatorScene.scene.personExitsAtFloor(destinationFloor);
+            ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        ElevatorScene.scene.personExitsAtFloor(destinationFloor);
-        ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
 
 
 
