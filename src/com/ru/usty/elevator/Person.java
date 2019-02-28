@@ -13,22 +13,16 @@ public class Person implements Runnable {
     @Override
     public void run() {
 
-       try {
-           // Hér er verið að bíða á ákveðinni semph. Ef við biðum á
-           // Réttri semoph., og hún hleypir okkur inn á réttri hæð,
-           // Þá vitum við að þegar við erum komin niður fyrir catch blockina
-           // í kóðanum, að þá er það búið að gerast.
-           // Person þráðurinn þarf því ekki að tékka á neinu, ef hann komst
-           // í gegn þá eru þær aðstæður við lýði sem við erum að leitast eftir
+        // Hér er verið að bíða á ákveðinni semph. Ef við biðum á
+        // Réttri semoph., og hún hleypir okkur inn á réttri hæð,
+        // Þá vitum við að þegar við erum komin niður fyrir catch blockina
+        // í kóðanum, að þá er það búið að gerast.
+        // Person þráðurinn þarf því ekki að tékka á neinu, ef hann komst
+        // í gegn þá eru þær aðstæður við lýði sem við erum að leitast eftir
 
-           ElevatorScene.elevatorWaitMutex.acquire();
-             ElevatorScene.inSem.acquire(); // Wait
-           ElevatorScene.elevatorWaitMutex.release();
-
-
-           // ATH: lyftan þarf einnig að locka þessum Mutex þegar hún er að
-           // mæta á hæðina og breyta honum eða þegar hún er að fara á hæðina
-           // og breyta honum.
+        // ATH: lyftan þarf einnig að locka þessum Mutex þegar hún er að
+        // mæta á hæðina og breyta honum eða þegar hún er að fara á hæðina
+        // og breyta honum.
 
            /* Person þræðirnir kalla bara einu sinni á þennan Mutex en lyftan oft
                 sem þýðir að ef hún er í lúppu væri hægt að stinga sér inn og í og eiga
@@ -75,28 +69,26 @@ public class Person implements Runnable {
             bíða eftir að það komi einhver lyfta; áður en sú semophora er losnuð
             þarf einhver að sjá til þess að setja í einhverja breytu hvaða lyfta
             það er sem þú mátt fara inn í. Og þá ferðu inn og waitar eftir annarri
-            semophoru fyrir þá lyftu og hún hleypir þér síðan inn.
+            semophoru fyrir þá lyftu og hún hleypir þér síðan inn.*/
 
+       try {
+           ElevatorScene.elevatorWaitMutex.acquire();
+             ElevatorScene.inSem.acquire(); // Wait
+           ElevatorScene.elevatorWaitMutex.release();
 
-            */
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         // Person is through barrier hér
-
-
         ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
-        ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
+        //ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
-       // System.out.println("outsem: " + ElevatorScene.outSem.length);
-
-
         try {
-            ElevatorScene.testMutex.acquire();
+            //ElevatorScene.testMutex.acquire();
                 ElevatorScene.outSem[destinationFloor].acquire(); // Wait
-            ElevatorScene.testMutex.release();
+            //ElevatorScene.testMutex.release();
 
             ElevatorScene.scene.personExitsAtFloor(destinationFloor);
             ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
