@@ -22,7 +22,7 @@ public class Person implements Runnable {
            // í gegn þá eru þær aðstæður við lýði sem við erum að leitast eftir
 
            ElevatorScene.elevatorWaitMutex.acquire();
-            ElevatorScene.sem.acquire(); // Wait
+            ElevatorScene.inSem.acquire(); // Wait
            ElevatorScene.elevatorWaitMutex.release();
 
            // ATH: lyftan þarf einnig að locka þessum Mutex þegar hún er að

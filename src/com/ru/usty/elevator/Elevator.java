@@ -20,10 +20,10 @@ public class Elevator implements Runnable {
            }
 
            for (int i = 0; i < 10; i++) {
-               ElevatorScene.sem.release();
+               ElevatorScene.inSem.release();
            }
 
-        /*System.out.println("ELEVATOR");
+        System.out.println("ELEVATOR");
         while(true) {
             try {
                 Thread.sleep(500);
@@ -43,12 +43,13 @@ public class Elevator implements Runnable {
                 currFloor--;
             }
             ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+            
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
        }
 
     }

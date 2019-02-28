@@ -20,8 +20,6 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
-	private Thread elevatorThread = null;
-
 	// instance of ElevatorScene
 	public static ElevatorScene scene;
 
@@ -42,13 +40,17 @@ public class ElevatorScene {
 	public static Semaphore personCountMutex;
 
 	public static Semaphore elevatorWaitMutex;
+	
+	
+	public static Semaphore inSem;
+	public static Semaphore outSem;
 
 	// Þegar við gerum static þá deilum við henni á milli þráða
 	// Þessi semaphora er núna aðgengileg hvaða sem er frá.
 	// Mjög líklegt að við þurfum bara að nota þessa semaphoru inni
 	// í ElevatorScene og því líklegt að við mættum hafa hana sem private
 	// tilviksbreytu hér í ElevatorScene
-	public static Semaphore sem;
+	//public static Semaphore sem;
 
 	/*ArrayList<Semaphore> inSem;
 	ArrayList<Semaphore> outSem;
@@ -57,7 +59,7 @@ public class ElevatorScene {
 
 	ArrayList<Thread> elevatorThreads;
 	public ArrayList<Integer> currentFloorForElevator;
-	//ArrayList<Integer> numberOfPeopleInElevator;
+	ArrayList<Integer> numberOfPeopleInElevator;
 
 	//Base function: definition must not change
 	//Necessary to add your code in this one
@@ -67,6 +69,13 @@ public class ElevatorScene {
 
 		currentFloorForElevator = new ArrayList<Integer>();
 		elevatorThreads = new ArrayList<Thread>();
+		numberOfPeopleInElevator = new ArrayList<Integer>();
+		personCount = new ArrayList<Integer>();
+		
+		inSem = new Semaphore(0);
+		outSem = new Semaphore(0);
+		
+		
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			if (elevatorThreads.get(i) != null) {
@@ -79,15 +88,10 @@ public class ElevatorScene {
 				}
 			}
 		}
-
 		elevatorsMayDie = false;
-
 
 		// initialize the instance of ElevatorScene
 		scene = this;
-
-		// Þessi semaphora er núna læst í upphafi.
-		sem = new Semaphore(0);
 
 		// Stillt á einn => Fyrsti sem kallar á wait() á henni kemst í gegn
 		// Hann mun svo setja hana aftur niður í núll þegar hann er búinn
@@ -95,8 +99,7 @@ public class ElevatorScene {
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
-
-		elevatorsMayDie = false;
+		
 		/**
 		 * Important to add code here to make new
 		 * threads that run your elevator-runnables
@@ -112,24 +115,15 @@ public class ElevatorScene {
 		this.numberOfElevators = numberOfElevators;
 
 
-
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			this.currentFloorForElevator.add(0);
+			this.numberOfPeopleInElevator.add(0);
 			Elevator elevator = new Elevator(getNumberOfFloors());
 			Thread elevatorThread = new Thread(elevator);
 			elevatorThreads.add(elevatorThread);
 			elevatorThreads.get(i).start();
 		}
 
-
-		/*
-		numberOfPeopleInElevator = new ArrayList<Integer>();
-		for(int i = 0; i < getNumberOfElevators(); i++) {
-			this.numberOfPeopleInElevator.add(0);
-		}*/
-
-
-		personCount = new ArrayList<Integer>();
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.personCount.add(0);
 		}
@@ -143,8 +137,6 @@ public class ElevatorScene {
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.exitedCount.add(0);
 		}
-
-
 
 	}
 
@@ -170,9 +162,7 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
-
-		return 1;
-		//return numberOfPeopleInElevator.get(elevator);
+		return numberOfPeopleInElevator.get(elevator);
 	}
 
 
@@ -197,7 +187,7 @@ public class ElevatorScene {
 
 	public void incrementNumberOfPeopleWaitingAtFloor(int floor) {
 
-		// Spurning: Er nóg einn mutex hér eða þarf einn per hæð?
+		// Spurning: Er nóg einn mutex hér eða þarf einn per hæð? TODO
 
 		try {
 			ElevatorScene.personCountMutex.acquire();
