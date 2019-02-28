@@ -23,7 +23,12 @@ public class Person implements Runnable {
 
            ElevatorScene.elevatorWaitMutex.acquire();
             ElevatorScene.inSem.acquire(); // Wait
+           System.out.println("number og people in ele: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+           ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
+           System.out.println("number og people in ele: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+           System.out.println("Available permits: " + ElevatorScene.scene.inSem.availablePermits());
            ElevatorScene.elevatorWaitMutex.release();
+
 
            // ATH: lyftan þarf einnig að locka þessum Mutex þegar hún er að
            // mæta á hæðina og breyta honum eða þegar hún er að fara á hæðina

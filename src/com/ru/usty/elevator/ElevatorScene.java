@@ -20,6 +20,9 @@ public class ElevatorScene {
 	private int numberOfFloors;
 	private int numberOfElevators;
 
+
+	public int maxNumberOfPeopleInElevator = 6;
+
 	// instance of ElevatorScene
 	public static ElevatorScene scene;
 
@@ -40,17 +43,18 @@ public class ElevatorScene {
 	public static Semaphore personCountMutex;
 
 	public static Semaphore elevatorWaitMutex;
-	
-	
-	public static Semaphore inSem;
-	public static Semaphore outSem;
+
+	public static Semaphore numberOfPeopleInElevatorMutex;
+
 
 	// Þegar við gerum static þá deilum við henni á milli þráða
 	// Þessi semaphora er núna aðgengileg hvaða sem er frá.
 	// Mjög líklegt að við þurfum bara að nota þessa semaphoru inni
 	// í ElevatorScene og því líklegt að við mættum hafa hana sem private
 	// tilviksbreytu hér í ElevatorScene
-	//public static Semaphore sem;
+
+	public static Semaphore inSem;
+
 
 	/*ArrayList<Semaphore> inSem;
 	ArrayList<Semaphore> outSem;
@@ -71,11 +75,6 @@ public class ElevatorScene {
 		elevatorThreads = new ArrayList<Thread>();
 		numberOfPeopleInElevator = new ArrayList<Integer>();
 		personCount = new ArrayList<Integer>();
-		
-		inSem = new Semaphore(0);
-		outSem = new Semaphore(0);
-		
-		
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			if (elevatorThreads.get(i) != null) {
@@ -93,13 +92,16 @@ public class ElevatorScene {
 		// initialize the instance of ElevatorScene
 		scene = this;
 
+
 		// Stillt á einn => Fyrsti sem kallar á wait() á henni kemst í gegn
 		// Hann mun svo setja hana aftur niður í núll þegar hann er búinn
 		// Og því kemst næsti ekki inn aftur fyrr en hann er búinn --> Mutual exclusion
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
-		
+
+		numberOfPeopleInElevatorMutex = new Semaphore(1);
+
 		/**
 		 * Important to add code here to make new
 		 * threads that run your elevator-runnables
@@ -162,9 +164,29 @@ public class ElevatorScene {
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
+
 		return numberOfPeopleInElevator.get(elevator);
 	}
 
+	public void incrementNumberOfPeopleInElevator(int elevator) {
+		try {
+			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) + 1);
+			ElevatorScene.numberOfPeopleInElevatorMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void decrementNumberOfPeopleInElevator(int elevator) {
+		try {
+			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) - 1);
+			ElevatorScene.numberOfPeopleInElevatorMutex.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleWaitingAtFloor(int floor) {
