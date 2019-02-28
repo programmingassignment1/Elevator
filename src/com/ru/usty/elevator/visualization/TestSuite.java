@@ -104,6 +104,7 @@ public class TestSuite {
 		switch(sceneNumber) {
 		case 0:
 			for(int i = 0; i < 13; i++) {
+				Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
 				personThreads.add(visualizationScene.addPerson(0, 1));
 			}
 			for(int i = 0; i < 13; i++) {
