@@ -44,7 +44,7 @@ public class ElevatorScene {
 	public static Semaphore destinationFloorMutex;
 	public static Semaphore numberOfPeopleInElevatorMutex;
 
-	public static Semaphore inSem;
+	public static Semaphore[] inSem;
 	public static Semaphore[] outSem;
 
 	//ArrayList<Semaphore> floorSem;
@@ -67,7 +67,7 @@ public class ElevatorScene {
 		personCount = new ArrayList<Integer>();
 		personDestination = new ArrayList<Integer>();
 
-		inSem = new Semaphore(0);
+		inSem = new Semaphore[getNumberOfFloors()];
 		outSem = new Semaphore[getNumberOfFloors()];
 
 		for(Thread thread : elevatorThreads) {
@@ -99,6 +99,7 @@ public class ElevatorScene {
 
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			outSem[i] = new Semaphore(0);
+			inSem[i] = new Semaphore(0);
 		}
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
