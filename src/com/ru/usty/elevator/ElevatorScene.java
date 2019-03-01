@@ -36,30 +36,15 @@ public class ElevatorScene {
 
 	////// ****** ALLT Í LAGI AÐ HAFA ALLAR SEMPHORUR HÉR (KÁRI) ***** ////
 
+	// Mutual exclusion Semophores
 	public static Semaphore exitedCountMutex;
-
-	// Þessi breyta er fyrir Mutual Exclusion í personCount
-	// Það er líka til sérklasi fyrir binary semaphores (segir Kári)
 	public static Semaphore personCountMutex;
-
 	public static Semaphore elevatorWaitMutex;
-
 	public static Semaphore testMutex;
-
 	public static Semaphore destinationFloorMutex;
-
 	public static Semaphore numberOfPeopleInElevatorMutex;
 
-	// Þegar við gerum static þá deilum við henni á milli þráða
-	// Þessi semaphora er núna aðgengileg hvaða sem er frá.
-	// Mjög líklegt að við þurfum bara að nota þessa semaphoru inni
-	// í ElevatorScene og því líklegt að við mættum hafa hana sem private
-	// tilviksbreytu hér í ElevatorScene
-
-	//public static ArrayList<Semaphore> inSem;
-	//public static ArrayList<Semaphore> outSem;
-
-	public static Semaphore inSem;
+	public static Semaphore[] inSem;
 	public static Semaphore[] outSem;
 
 	//ArrayList<Semaphore> floorSem;
@@ -82,7 +67,7 @@ public class ElevatorScene {
 		personCount = new ArrayList<Integer>();
 		personDestination = new ArrayList<Integer>();
 
-		inSem = new Semaphore(0);
+		inSem = new Semaphore[getNumberOfFloors()];
 		outSem = new Semaphore[getNumberOfFloors()];
 
 		for(Thread thread : elevatorThreads) {
@@ -108,15 +93,12 @@ public class ElevatorScene {
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		destinationFloorMutex = new Semaphore(1);
-
-		/***/
 		testMutex = new Semaphore(1);
-		/***/
-
 		exitedCountMutex = new Semaphore(1);
 		numberOfPeopleInElevatorMutex = new Semaphore(1);
 
 		for(int i = 0; i < getNumberOfFloors(); i++) {
+			inSem[i] = new Semaphore(0);
 			outSem[i] = new Semaphore(0);
 		}
 

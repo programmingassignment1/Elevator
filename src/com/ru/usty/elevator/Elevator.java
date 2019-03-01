@@ -40,16 +40,16 @@ public class Elevator implements Runnable {
 
             // fólk acquire-ar insem
             int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
-            System.out.println("People waiting at floor: " + numberOfPeopleWaitingAtFloor);
+            System.out.println("People waiting at floor " + currFloor + ": " + numberOfPeopleWaitingAtFloor);
             int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
             System.out.println("Empty spaces in elevator: " + numberOfEmptySpacesInElevator);
 
             int oldCount = ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
             // lyftan release-ar inSem jafn oft og peopleWaitingAtFloor (min fallið her)
-            System.out.println("Permits of inSem before release: " + ElevatorScene.inSem.availablePermits());
-            ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
-            System.out.println("Permits of inSem after release: " + ElevatorScene.inSem.availablePermits());
+            System.out.println("Permits of inSem before release: " + ElevatorScene.inSem[currFloor].availablePermits());
+            ElevatorScene.inSem[currFloor].release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+            System.out.println("Permits of inSem after release: " + ElevatorScene.inSem[currFloor].availablePermits());
             System.out.println("Letting people into elevator");
             try {
                 Thread.sleep(500);
