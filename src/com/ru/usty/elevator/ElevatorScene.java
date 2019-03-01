@@ -26,8 +26,6 @@ public class ElevatorScene {
 
 	// fylki sem heldur utan um hversu margar personur eru a hverri hæð
 	public ArrayList<Integer> personCount; //use if you want but throw away and implement differently if it suits you
-	// fylki sem heldur utan um á hvaða hæðum fólk ætlar út
-	public ArrayList<Integer> personDestination;
 	// heldur utan um hversu margir exituðu á hverri hæð
 	public ArrayList<Integer> exitedCount = null;
 
@@ -38,13 +36,9 @@ public class ElevatorScene {
 	// Mutual exclusion Semophores
 	public static Semaphore exitedCountMutex;
 	public static Semaphore personCountMutex;
-	public static Semaphore elevatorWaitMutex;
-	public static Semaphore destinationFloorMutex;
-	public static Semaphore numberOfPeopleInElevatorMutex;
 
 	public static ArrayList<Semaphore> inSem;
 	public static ArrayList<Semaphore> outSem;
-
 
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
 
@@ -58,7 +52,6 @@ public class ElevatorScene {
 		elevatorThreads = new ArrayList<Thread>();
 		numberOfPeopleInElevator = new ArrayList<Integer>();
 		personCount = new ArrayList<Integer>();
-		personDestination = new ArrayList<Integer>();
 
 		inSem = new ArrayList<Semaphore>();
 		outSem = new ArrayList<Semaphore>();
@@ -85,10 +78,7 @@ public class ElevatorScene {
 		elevatorsMayDie = false;
 
 		personCountMutex = new Semaphore(1);
-		elevatorWaitMutex = new Semaphore(1);
-		destinationFloorMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
-		numberOfPeopleInElevatorMutex = new Semaphore(1);
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			this.currentFloorForElevator.add(0);
@@ -107,7 +97,6 @@ public class ElevatorScene {
 		}
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.personCount.add(0);
-			this.personDestination.add(0);
 			this.exitedCount.add(0);
 		}
 	}
@@ -140,9 +129,9 @@ public class ElevatorScene {
 
 	public void incrementNumberOfPeopleInElevator(int elevator) {
 		try {
-			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			ElevatorScene.personCountMutex.acquire();
 			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) + 1);
-			ElevatorScene.numberOfPeopleInElevatorMutex.release();
+			ElevatorScene.personCountMutex.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -150,19 +139,9 @@ public class ElevatorScene {
 
 	public void decrementNumberOfPeopleInElevator(int elevator) {
 		try {
-			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
+			ElevatorScene.personCountMutex.acquire();
 			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) - 1);
-			ElevatorScene.numberOfPeopleInElevatorMutex.release();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void incrementDestinationFloors(int elevator) {
-		try {
-			ElevatorScene.destinationFloorMutex.acquire();
-			personDestination.set(elevator, personDestination.get(elevator) + 1);
-			ElevatorScene.destinationFloorMutex.release();
+			ElevatorScene.personCountMutex.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

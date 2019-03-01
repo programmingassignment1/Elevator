@@ -22,7 +22,6 @@ public class Person implements Runnable {
 
         // Person is through barrier hér
         ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
-        ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
         try {
