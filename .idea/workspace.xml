@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ea9015eb-70c2-43f1-bf9f-c09d4519dd14" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/ru/usty/elevator/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/ru/usty/elevator/Person.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,12 +36,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="10863" />
+          <entry key="java" value="11113" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="10863" />
+          <entry key="JAVA" value="11113" />
         </counts>
       </usages-collector>
     </session>
@@ -60,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1927">
-              <caret line="146" column="42" selection-start-line="146" selection-start-column="42" selection-end-line="146" selection-end-column="42" />
+            <state relative-caret-position="355">
+              <caret line="117" column="32" selection-start-line="117" selection-start-column="32" selection-end-line="117" selection-end-column="32" />
               <folding>
                 <element signature="e#6524#6525#0" expanded="true" />
                 <element signature="e#6552#6553#0" expanded="true" />
@@ -106,11 +103,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="31" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
+            <state relative-caret-position="255">
+              <caret line="17" column="31" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -146,9 +143,10 @@
       <find>testMute</find>
       <find>destination</find>
       <find>numberOfPeopleInEle</find>
-      <find>destinationfl</find>
       <find>elevatorWaitMutex</find>
       <find>numberOfPeopleInElevatorMutex</find>
+      <find>destinationfl</find>
+      <find>exitedCountMut</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -161,8 +159,8 @@
         <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/visualization/TestSuite.java" />
         <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/Elevator.java" />
         <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/Person.java" />
-        <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java" />
         <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java" />
+        <option value="$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java" />
       </list>
     </option>
   </component>
@@ -212,7 +210,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551460192923" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551460637216" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.24675325" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -276,12 +274,12 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.38726115" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.25605094" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.25477707" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3299363" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49930555" weight="0.13375796" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49930555" weight="0.2089172" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50069445" side_tool="true" weight="0.31885856" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.3299363" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.30318472" />
@@ -369,6 +367,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="31" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/Person.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -378,8 +383,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorScene.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1927">
-          <caret line="146" column="42" selection-start-line="146" selection-start-column="42" selection-end-line="146" selection-end-column="42" />
+        <state relative-caret-position="355">
+          <caret line="117" column="32" selection-start-line="117" selection-start-column="32" selection-end-line="117" selection-end-column="32" />
           <folding>
             <element signature="e#6524#6525#0" expanded="true" />
             <element signature="e#6552#6553#0" expanded="true" />
@@ -390,13 +395,6 @@
             <element signature="e#7000#7001#0" expanded="true" />
             <element signature="e#7049#7050#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/ru/usty/elevator/ElevatorMainProgram.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="31" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
         </state>
       </provider>
     </entry>

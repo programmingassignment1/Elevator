@@ -45,6 +45,15 @@ public class ElevatorScene {
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 
+		initializeVariables();
+
+		joinThreads();
+
+		createElevatorThreads();
+	}
+
+	private void initializeVariables() {
+
 		// initialize the instance of ElevatorScene
 		scene = this;
 
@@ -52,6 +61,9 @@ public class ElevatorScene {
 		elevatorThreads = new ArrayList<Thread>();
 		numberOfPeopleInElevator = new ArrayList<Integer>();
 		personCount = new ArrayList<Integer>();
+
+		personCountMutex = new Semaphore(1);
+		exitedCountMutex = new Semaphore(1);
 
 		inSem = new ArrayList<Semaphore>();
 		outSem = new ArrayList<Semaphore>();
@@ -61,6 +73,25 @@ public class ElevatorScene {
 			inSem.add(new Semaphore(0));
 		}
 
+		for(int i = 0; i < getNumberOfElevators(); i++) {
+			this.currentFloorForElevator.add(0);
+			this.numberOfPeopleInElevator.add(0);
+		}
+
+		if(exitedCount == null) {
+			exitedCount = new ArrayList<Integer>();
+		}
+		else {
+			exitedCount.clear();
+		}
+
+		for(int i = 0; i < getNumberOfFloors(); i++) {
+			this.personCount.add(0);
+			this.exitedCount.add(0);
+		}
+	}
+
+	private void joinThreads() {
 		elevatorsMayDie = true;
 
 		for(Thread thread : elevatorThreads) {
@@ -76,28 +107,14 @@ public class ElevatorScene {
 		}
 
 		elevatorsMayDie = false;
+	}
 
-		personCountMutex = new Semaphore(1);
-		exitedCountMutex = new Semaphore(1);
-
+	private void createElevatorThreads() {
 		for(int i = 0; i < getNumberOfElevators(); i++) {
-			this.currentFloorForElevator.add(0);
-			this.numberOfPeopleInElevator.add(0);
 			Elevator elevator = new Elevator(getNumberOfFloors());
 			Thread elevatorThread = new Thread(elevator);
 			elevatorThreads.add(elevatorThread);
 			elevatorThreads.get(i).start();
-		}
-
-		if(exitedCount == null) {
-			exitedCount = new ArrayList<Integer>();
-		}
-		else {
-			exitedCount.clear();
-		}
-		for(int i = 0; i < getNumberOfFloors(); i++) {
-			this.personCount.add(0);
-			this.exitedCount.add(0);
 		}
 	}
 
