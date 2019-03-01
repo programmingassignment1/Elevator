@@ -13,41 +13,33 @@ import java.util.concurrent.Semaphore;
 
 public class ElevatorScene {
 
-	//TO SPEED THINGS UP WHEN TESTING,
-	//feel free to change this.  It will be changed during grading
 	public static final int VISUALIZATION_WAIT_TIME = 500;  //milliseconds
+	public static final int maxNumberOfPeopleInElevator = 6;
 
 	private int numberOfFloors;
 	private int numberOfElevators;
 
-	public int maxNumberOfPeopleInElevator = 6;
-
 	// instance of ElevatorScene
 	public static ElevatorScene scene;
-
 	public static boolean elevatorsMayDie;
 
 	// fylki sem heldur utan um hversu margar personur eru a hverri hæð
-	ArrayList<Integer> personCount; //use if you want but throw away and implement differently if it suits you
+	ArrayList<Integer> personCount;
+	// fylki sem heldur utan um á hvaða hæð fólkið ætlar út
 	ArrayList<Integer> personDestination;
-
 	// heldur utan um hversu margir exituðu á hverri hæð
 	ArrayList<Integer> exitedCount = null;
 
-	////// ****** ALLT Í LAGI AÐ HAFA ALLAR SEMPHORUR HÉR (KÁRI) ***** ////
 
 	// Mutual exclusion Semophores
 	public static Semaphore exitedCountMutex;
 	public static Semaphore personCountMutex;
 	public static Semaphore elevatorWaitMutex;
-	public static Semaphore testMutex;
 	public static Semaphore destinationFloorMutex;
 	public static Semaphore numberOfPeopleInElevatorMutex;
 
-	public static Semaphore[] inSem;
-	public static Semaphore[] outSem;
-
-	//ArrayList<Semaphore> floorSem;
+	public static ArrayList<Semaphore> inSem;
+	public static ArrayList<Semaphore> outSem;
 
 	ArrayList<Thread> elevatorThreads;
 	public ArrayList<Integer> currentFloorForElevator;
@@ -67,8 +59,8 @@ public class ElevatorScene {
 		personCount = new ArrayList<Integer>();
 		personDestination = new ArrayList<Integer>();
 
-		inSem = new Semaphore[getNumberOfFloors()];
-		outSem = new Semaphore[getNumberOfFloors()];
+		inSem = new ArrayList<Semaphore>();
+		outSem = new ArrayList<Semaphore>();
 
 		for(Thread thread : elevatorThreads) {
 			if (thread != null) {
@@ -93,13 +85,12 @@ public class ElevatorScene {
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		destinationFloorMutex = new Semaphore(1);
-		testMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
 		numberOfPeopleInElevatorMutex = new Semaphore(1);
 
 		for(int i = 0; i < getNumberOfFloors(); i++) {
-			outSem[i] = new Semaphore(0);
-			inSem[i] = new Semaphore(0);
+			outSem.add(new Semaphore(0));
+			inSem.add(new Semaphore(0));
 		}
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {

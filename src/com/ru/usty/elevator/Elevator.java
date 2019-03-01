@@ -47,31 +47,31 @@ public class Elevator implements Runnable {
 
     private void letPeopleOutOfElevator() {
 
-        threadSleep();
-
-        ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+        ElevatorScene.outSem.get(currFloor).release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
 
         try {
             threadSleep();
-            ElevatorScene.outSem[currFloor].acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            ElevatorScene.outSem.get(currFloor).acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        threadSleep();
     }
 
     private void letPeopleIntoElevator() {
 
         int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
-        int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+        int numberOfEmptySpacesInElevator = ElevatorScene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
-        ElevatorScene.inSem[currFloor].release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+        ElevatorScene.inSem.get(currFloor).release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
         threadSleep();
     }
 
     private void threadSleep() {
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
