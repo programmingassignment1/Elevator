@@ -76,6 +76,7 @@ public class Elevator implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //hallo
     }
 
     private int min(int former, int latter) {
