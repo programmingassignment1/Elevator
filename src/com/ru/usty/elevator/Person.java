@@ -18,7 +18,7 @@ public class Person implements Runnable {
 
        try {
            ElevatorScene.elevatorWaitMutex.acquire();
-             ElevatorScene.inSem[sourceFloor].acquire(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor)); // Wait
+             ElevatorScene.inSem.acquire(); // Wait
            System.out.println("inSem acquired by Person at floor: " + sourceFloor);
            ElevatorScene.elevatorWaitMutex.release();
 
@@ -28,7 +28,7 @@ public class Person implements Runnable {
 
         // Person is through barrier hér
         ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
-        //ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
+        ElevatorScene.scene.incrementDestinationFloors(destinationFloor);
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
         /*try {
@@ -54,14 +54,5 @@ public class Person implements Runnable {
         System.out.println("Person thread released");
 
     }
-
-    private int min(int former, int latter) {
-        if(former < latter) {
-            return former;
-        } else {
-            return latter;
-        }
-    }
-
 }
 

@@ -27,12 +27,28 @@ public class Elevator implements Runnable {
             }*/
 
             System.out.println("Permits of outSem before release: " + ElevatorScene.outSem[currFloor].availablePermits());
+
+
+            ///// ***** LAGA  ***** //////
+
+
+
             ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            System.out.println("DestinationFloors Array: [ " + ElevatorScene.scene.getDestinationFloors(0) + ", " + ElevatorScene.scene.getDestinationFloors(1) + ", " + ElevatorScene.scene.getDestinationFloors(2) + ", " + ElevatorScene.scene.getDestinationFloors(3) + " ]");
+
+
+
+            ///// ***** LAGA ***** /////
+
+
+
             System.out.println("Permits of outSem after release: " + ElevatorScene.outSem[currFloor].availablePermits());
             System.out.println("Letting people out of elevator");
             try {
                 Thread.sleep(500);
                 System.out.println("Waiting 0.5 s .....");
+                System.out.println("Closing door!!!");
+                ElevatorScene.outSem[currFloor].acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -47,9 +63,9 @@ public class Elevator implements Runnable {
             int oldCount = ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
             // lyftan release-ar inSem jafn oft og peopleWaitingAtFloor (min fallið her)
-            System.out.println("Permits of inSem before release: " + ElevatorScene.inSem[currFloor].availablePermits());
-            ElevatorScene.inSem[currFloor].release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
-            System.out.println("Permits of inSem after release: " + ElevatorScene.inSem[currFloor].availablePermits());
+            System.out.println("Permits of inSem before release: " + ElevatorScene.inSem.availablePermits());
+            ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+            System.out.println("Permits of inSem after release: " + ElevatorScene.inSem.availablePermits());
             System.out.println("Letting people into elevator");
             try {
                 Thread.sleep(500);

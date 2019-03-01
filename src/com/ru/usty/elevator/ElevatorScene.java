@@ -44,7 +44,7 @@ public class ElevatorScene {
 	public static Semaphore destinationFloorMutex;
 	public static Semaphore numberOfPeopleInElevatorMutex;
 
-	public static Semaphore[] inSem;
+	public static Semaphore inSem;
 	public static Semaphore[] outSem;
 
 	//ArrayList<Semaphore> floorSem;
@@ -67,7 +67,7 @@ public class ElevatorScene {
 		personCount = new ArrayList<Integer>();
 		personDestination = new ArrayList<Integer>();
 
-		inSem = new Semaphore[getNumberOfFloors()];
+		inSem = new Semaphore(0);
 		outSem = new Semaphore[getNumberOfFloors()];
 
 		for(Thread thread : elevatorThreads) {
@@ -98,21 +98,8 @@ public class ElevatorScene {
 		numberOfPeopleInElevatorMutex = new Semaphore(1);
 
 		for(int i = 0; i < getNumberOfFloors(); i++) {
-			inSem[i] = new Semaphore(0);
 			outSem[i] = new Semaphore(0);
 		}
-
-		/**
-		 * Important to add code here to make new
-		 * threads that run your elevator-runnables
-		 *
-		 * Also add any other code that initializes
-		 * your system for a new run
-		 *
-		 * If you can, tell any currently running
-		 * elevator threads to stop
-		 */
-
 
 		for(int i = 0; i < getNumberOfElevators(); i++) {
 			this.currentFloorForElevator.add(0);
