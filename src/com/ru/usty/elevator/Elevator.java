@@ -16,25 +16,26 @@ public class Elevator implements Runnable {
     public void run() {
 
 
-        int temp = 0;
-
         while(true) {
             if (ElevatorScene.elevatorsMayDie) {
                 return;
             }
 
-            temp = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+            int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(0);
+            int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            
             if(currFloor == 0) {
                 isGoingUp = true;
             }
             else if(numberOfFloors - 1 == currFloor) {
                 isGoingUp = false;
+   
             }
             if(isGoingUp) {
                 currFloor++;
@@ -43,17 +44,31 @@ public class Elevator implements Runnable {
                 currFloor--;
             }
             ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
-            
+
+            if(currFloor == 0) {
+                ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+                
+                // þarf lyftan að acquirea 6 - numberOfPeopleInElevator sinnum til að læsa semaphorunni?
+            }
+            else if(numberOfFloors - 1 == currFloor) {
+                ElevatorScene.outSem.release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+                
+            }
+
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            if(temp > 1){
-                ElevatorScene.inSem.release();
-            }
         }
+    }
 
+    private int min(int former, int latter) {
+        if(former < latter) {
+            return former;
+        } else {
+            return latter;
+        }
     }
 }

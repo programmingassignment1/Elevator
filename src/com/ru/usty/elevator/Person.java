@@ -22,11 +22,7 @@ public class Person implements Runnable {
            // í gegn þá eru þær aðstæður við lýði sem við erum að leitast eftir
 
            ElevatorScene.elevatorWaitMutex.acquire();
-            ElevatorScene.inSem.acquire(); // Wait
-           System.out.println("number og people in ele: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
-           ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
-           System.out.println("number og people in ele: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
-           System.out.println("Available permits: " + ElevatorScene.scene.inSem.availablePermits());
+             ElevatorScene.inSem.acquire(); // Wait
            ElevatorScene.elevatorWaitMutex.release();
 
 
@@ -90,7 +86,23 @@ public class Person implements Runnable {
         // Person is through barrier hér
 
         // Minnkum við röðina
+        ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
+
+
+
+        try {
+            ElevatorScene.testMutex.acquire();
+                ElevatorScene.outSem.acquire(); // Wait
+            ElevatorScene.testMutex.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ElevatorScene.scene.personExitsAtFloor(destinationFloor);
+        ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
+
+
 
         // Hvað þarf þráðurinn að gera næst?
         // Nú er hann kominn inn í lyftu, búinn að ganga frá einhverjum

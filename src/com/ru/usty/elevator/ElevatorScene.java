@@ -44,6 +44,9 @@ public class ElevatorScene {
 
 	public static Semaphore elevatorWaitMutex;
 
+
+	public static Semaphore testMutex;
+
 	public static Semaphore numberOfPeopleInElevatorMutex;
 
 
@@ -54,6 +57,7 @@ public class ElevatorScene {
 	// tilviksbreytu hér í ElevatorScene
 
 	public static Semaphore inSem;
+	public static Semaphore outSem;
 
 
 	/*ArrayList<Semaphore> inSem;
@@ -92,12 +96,21 @@ public class ElevatorScene {
 		// initialize the instance of ElevatorScene
 		scene = this;
 
+		// Þessi semaphora er núna læst í upphafi.
+		inSem = new Semaphore(0);
+		outSem = new Semaphore(0);
+
 
 		// Stillt á einn => Fyrsti sem kallar á wait() á henni kemst í gegn
 		// Hann mun svo setja hana aftur niður í núll þegar hann er búinn
 		// Og því kemst næsti ekki inn aftur fyrr en hann er búinn --> Mutual exclusion
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
+
+		/***/
+		testMutex = new Semaphore(1);
+		/***/
+
 		exitedCountMutex = new Semaphore(1);
 
 		numberOfPeopleInElevatorMutex = new Semaphore(1);
@@ -181,7 +194,7 @@ public class ElevatorScene {
 	public void decrementNumberOfPeopleInElevator(int elevator) {
 		try {
 			ElevatorScene.numberOfPeopleInElevatorMutex.acquire();
-			numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) - 1);
+				numberOfPeopleInElevator.set(elevator, numberOfPeopleInElevator.get(elevator) - 1);
 			ElevatorScene.numberOfPeopleInElevatorMutex.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -200,7 +213,7 @@ public class ElevatorScene {
 
 		try {
 			ElevatorScene.personCountMutex.acquire();
-			personCount.set(floor, (personCount.get(floor) -1));
+				personCount.set(floor, (personCount.get(floor) -1));
 			ElevatorScene.personCountMutex.release();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -281,6 +294,5 @@ public class ElevatorScene {
 			return 0;
 		}
 	}
-
 
 }
