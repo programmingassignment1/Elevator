@@ -20,46 +20,43 @@ public class Elevator implements Runnable {
                 return;
             }
 
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("number of exited at floor " + currFloor + " " + ElevatorScene.scene.exitedCount);
-            // það fólk sem vill fara út fer út
-
-            // acquire
-
-            // lyftan acquire-ar outSem 6 sinnum
             /*try {
-                ElevatorScene.outSem[currFloor].acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }*/
 
-            // fólk acquire-ar insem
-            int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
-            int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
-
-            int oldCount = ElevatorScene.scene.getNumberOfPeopleInElevator(0);
-
+            System.out.println("Permits of outSem before release: " + ElevatorScene.outSem[currFloor].availablePermits());
+            ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            System.out.println("Permits of outSem after release: " + ElevatorScene.outSem[currFloor].availablePermits());
+            System.out.println("Letting people out of elevator");
             try {
                 Thread.sleep(500);
+                System.out.println("Waiting 0.5 s .....");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.out.println("number of exited at floor " + currFloor + " " + ElevatorScene.scene.exitedCount);
+
+            // fólk acquire-ar insem
+            int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
+            System.out.println("People waiting at floor: " + numberOfPeopleWaitingAtFloor);
+            int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+            System.out.println("Empty spaces in elevator: " + numberOfEmptySpacesInElevator);
+
+            int oldCount = ElevatorScene.scene.getNumberOfPeopleInElevator(0);
 
             // lyftan release-ar inSem jafn oft og peopleWaitingAtFloor (min fallið her)
+            System.out.println("Permits of inSem before release: " + ElevatorScene.inSem.availablePermits());
             ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+            System.out.println("Permits of inSem after release: " + ElevatorScene.inSem.availablePermits());
+            System.out.println("Letting people into elevator");
+            try {
+                Thread.sleep(500);
+                System.out.println("Waiting 0.5 s .....");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             /*try {
                 Thread.sleep(500);
@@ -69,7 +66,7 @@ public class Elevator implements Runnable {
 
             // lyftan acquire-ar inSem jafn oft og numberOfPeopleInElevator
 
-            System.out.println("number of people in ele: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            System.out.println("number of people in elevator: " + ElevatorScene.scene.getNumberOfPeopleInElevator(0));
 
             int inCount = ElevatorScene.scene.getNumberOfPeopleInElevator(0) - oldCount;
             /*try {
@@ -92,9 +89,12 @@ public class Elevator implements Runnable {
                     else {
                         currFloor--;
                     }
-                    // Farið á milli hæða
-                //ElevatorScene.testMutex.release();
+            //ElevatorScene.testMutex.acquire();
+
+
+            System.out.println("Moving between floors, now at " + ElevatorScene.scene.getCurrentFloorForElevator(0));
                 ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+            System.out.println("...And now at " + ElevatorScene.scene.getCurrentFloorForElevator(0));
 
             try {
                 Thread.sleep(500);
@@ -102,28 +102,6 @@ public class Elevator implements Runnable {
                 e.printStackTrace();
             }
 
-            /*} catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
-
-            // lyftan breytir um hæð
-
-
-            /*if(currFloor == 0) {
-                ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
-                // þarf lyftan að acquirea 6 - numberOfPeopleInElevator sinnum til að læsa semaphorunni?
-            }
-            else {
-                ElevatorScene.outSem[currFloor].release(ElevatorScene.scene.getDestinationFloors(currFloor));
-                System.out.println( ElevatorScene.scene.getDestinationFloors(0) + " " + ElevatorScene.scene.getDestinationFloors(1) + " " + ElevatorScene.scene.getDestinationFloors(2) + " " + ElevatorScene.scene.getDestinationFloors(3) );
-                ElevatorScene.scene.personDestination.set(currFloor, 0);
-                System.out.println("number of exited at floor " + currFloor + " " + ElevatorScene.scene.exitedCount);
-                try {
-                    ElevatorScene.outSem[currFloor].acquire(ElevatorScene.scene.getDestinationFloors(currFloor));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }*/
         }
     }
 
