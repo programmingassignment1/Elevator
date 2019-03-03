@@ -2,9 +2,9 @@ package com.ru.usty.elevator;
 
 public class Elevator implements Runnable {
 
-    int currFloor;
-    int numberOfFloors;
-    boolean isGoingUp;
+    private int currFloor;
+    private int numberOfFloors;
+    private boolean isGoingUp;
 
     Elevator(int numberOfFloors) {
         this.numberOfFloors = numberOfFloors;
@@ -20,37 +20,60 @@ public class Elevator implements Runnable {
                 return;
             }
 
-            int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(0);
-            int numberOfEmptySpacesInElevator = ElevatorScene.scene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+            letPeopleOutOfElevator();
+            letPeopleIntoElevator();
+            moveElevator();
+        }
+    }
 
-            if(currFloor == 0) {
-                isGoingUp = true;
-                currFloor++;
-            }
-            else if(numberOfFloors - 1 == currFloor) {
-                isGoingUp = false;
-                currFloor--;
-            }
-            /*if(isGoingUp) {
-                currFloor++;
-            }
-            else {
-                currFloor--;
-            }*/
-            ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
-            if(currFloor == 0) {
-                ElevatorScene.inSem.release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
-                // þarf lyftan að acquirea 6 - numberOfPeopleInElevator sinnum til að læsa semaphorunni?
-            }
-            else if(numberOfFloors - 1 == currFloor) {
-                ElevatorScene.outSem.release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
-            }
+    private void moveElevator() {
+        if(currFloor == 0) {
+            isGoingUp = true;
+        }
+        else if(numberOfFloors - 1 == currFloor) {
+            isGoingUp = false;
+        }
+        if(isGoingUp) {
+            currFloor++;
+        }
+        else {
+            currFloor--;
+        }
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
+
+        threadSleep();
+    }
+
+    private void letPeopleOutOfElevator() {
+
+        ElevatorScene.outSem.get(currFloor).release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+
+        try {
+            threadSleep();
+            ElevatorScene.outSem.get(currFloor).acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        threadSleep();
+    }
+
+    private void letPeopleIntoElevator() {
+
+        int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
+        int numberOfEmptySpacesInElevator = ElevatorScene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
+
+        ElevatorScene.inSem.get(currFloor).release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
+        threadSleep();
+    }
+
+    private void threadSleep() {
+
+        try {
+            Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
