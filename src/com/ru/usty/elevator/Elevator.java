@@ -23,10 +23,29 @@ public class Elevator implements Runnable {
             }
             letPeopleOutOfElevator();
             letPeopleIntoElevator();
+            stopIfNobodyIsWaiting();
             moveElevator();
+           
+
+
         }
     }
 
+    private void stopIfNobodyIsWaiting() {
+        while (true) {
+            int temp = 0;
+            for(int i = 0; i < numberOfFloors; i++) {
+            	temp += ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(i);
+            }
+            for(int i = 0; i < ElevatorScene.scene.getNumberOfElevators(); i++) {
+            	temp += ElevatorScene.scene.getNumberOfPeopleInElevator(i);
+            }
+            
+            if(temp != 0 ) {
+            	return;
+            }
+        }
+    }
 
     private void moveElevator() {
     	// if the elevator is on the bottom floor
