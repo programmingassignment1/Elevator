@@ -69,7 +69,7 @@ public class TestSuite {
 			visualizationScene.restartScene(2, 1);
 			break;
 		case 3:
-			visualizationScene.restartScene(4, 1);
+			visualizationScene.restartScene(6, 1);
 			break;
 		case 4:
 			visualizationScene.restartScene(4, 3);
