@@ -156,14 +156,6 @@ public class TestSuite {
 				if(floorOut >= floorIn) { floorOut++; }
 				personThreads.add(visualizationScene.addPerson(floorIn, floorOut));
 			}
-			Thread.sleep(15000);
-			for(int i = 0; i < 60; i++) {
-				Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME / 2);
-				int floorIn = random.nextInt(visualizationScene.getNumberOfFloors());
-				int floorOut = random.nextInt(visualizationScene.getNumberOfFloors() - 1);
-				if(floorOut >= floorIn) { floorOut++; }
-				personThreads.add(visualizationScene.addPerson(floorIn, floorOut));
-			}
 			break;
 		case 4:
 			for(int i = 0; i < 30; i++) {

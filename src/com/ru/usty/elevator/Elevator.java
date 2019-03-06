@@ -13,7 +13,6 @@ public class Elevator implements Runnable {
         currFloor = numberInBeginning;
         isGoingUp = randBool();
     }
-   
 
     @Override
     public void run() {
@@ -25,23 +24,22 @@ public class Elevator implements Runnable {
             letPeopleIntoElevator();
             stopIfNobodyIsWaiting();
             moveElevator();
-           
-
-
         }
     }
 
     private void stopIfNobodyIsWaiting() {
         while (true) {
-            int temp = 0;
+            int peopleWaiting = 0;
+            // checking if there is a person waiting at some floor
             for(int i = 0; i < numberOfFloors; i++) {
-            	temp += ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(i);
+            	peopleWaiting += ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(i);
             }
+            // checking if there is a person in the elevator
             for(int i = 0; i < ElevatorScene.scene.getNumberOfElevators(); i++) {
-            	temp += ElevatorScene.scene.getNumberOfPeopleInElevator(i);
+            	peopleWaiting += ElevatorScene.scene.getNumberOfPeopleInElevator(i);
             }
-            
-            if(temp != 0 ) {
+            // if there is no one waiting, elevator stops
+            if(peopleWaiting != 0) {
             	return;
             }
         }
@@ -69,11 +67,11 @@ public class Elevator implements Runnable {
 
     
     private void letPeopleOutOfElevator() {
-    	// release outSem so the person gets out of the elevator for every person in elevator
+        // out-semaphore is released 6 times so those people who want can go out
         ElevatorScene.outSem.get(currFloor).release(ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator)); 
         try {
             threadSleep();
-            // acquire outSem back for every person who didn't go out at this floor
+            // out-semaphore is acquired for each person who didn't go out at this floor
             ElevatorScene.outSem.get(currFloor).acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator));
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -85,7 +83,7 @@ public class Elevator implements Runnable {
     private void letPeopleIntoElevator() {
         int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
         int numberOfEmptySpacesInElevator = ElevatorScene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator);
-        // release inSem so people can get in the elevator, as many as there is room for/how many are waiting
+        // in-semaphore is released so people can get in the elevator, as many times as there is room for or how many are waiting, depending on which number is smaller
         ElevatorScene.inSem.get(currFloor).release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
          threadSleep();
         

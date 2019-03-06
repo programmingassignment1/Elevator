@@ -15,7 +15,7 @@ public class Person implements Runnable {
     public void run() {
 
        try {
-    	   // acquire inSemaphore here for person to get into elevator
+           // in-semaphore is acquired when person thread "asks for an elevator"
            ElevatorScene.inSem.get(sourceFloor).acquire();
 
         } catch (InterruptedException e) {
@@ -27,7 +27,7 @@ public class Person implements Runnable {
         ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 
         try {
-        	// acquire the outSem for the person to go out of the elevator
+            // out-semaphore is acquired when person thread "asks to go out of elevator"
             ElevatorScene.outSem.get(destinationFloor).acquire(); 
             
             //incrementing and decrementing numbers
