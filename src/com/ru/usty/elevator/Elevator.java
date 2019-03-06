@@ -5,31 +5,54 @@ public class Elevator implements Runnable {
     private int currFloor;
     private int numberOfFloors;
     private boolean isGoingUp;
+	private int numberOfElevator;
 
-    Elevator(int numberOfFloors) {
+    Elevator(int numberOfFloors, int numberOfElevator, int numberInBeginning) {
         this.numberOfFloors = numberOfFloors;
-        currFloor = 0;
-        isGoingUp = true;
+        this.numberOfElevator = numberOfElevator;
+        currFloor = numberInBeginning;
+        isGoingUp = randBool();
     }
+   
 
     @Override
     public void run() {
-
         while(true) {
             if (ElevatorScene.elevatorsMayDie) {
                 return;
             }
-
             letPeopleOutOfElevator();
             letPeopleIntoElevator();
+            stopIfNobodyIsWaiting();
             moveElevator();
+           
+
+
+        }
+    }
+
+    private void stopIfNobodyIsWaiting() {
+        while (true) {
+            int temp = 0;
+            for(int i = 0; i < numberOfFloors; i++) {
+            	temp += ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(i);
+            }
+            for(int i = 0; i < ElevatorScene.scene.getNumberOfElevators(); i++) {
+            	temp += ElevatorScene.scene.getNumberOfPeopleInElevator(i);
+            }
+            
+            if(temp != 0 ) {
+            	return;
+            }
         }
     }
 
     private void moveElevator() {
+    	// if the elevator is on the bottom floor
         if(currFloor == 0) {
             isGoingUp = true;
         }
+        //if the elevator is on the top floor
         else if(numberOfFloors - 1 == currFloor) {
             isGoingUp = false;
         }
@@ -39,37 +62,36 @@ public class Elevator implements Runnable {
         else {
             currFloor--;
         }
-
-        ElevatorScene.scene.currentFloorForElevator.set(0, currFloor);
-
+        // setting the new position of elevator
+        ElevatorScene.scene.currentFloorForElevator.set(numberOfElevator, currFloor);
         threadSleep();
     }
 
+    
     private void letPeopleOutOfElevator() {
-
-        ElevatorScene.outSem.get(currFloor).release(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
-
+    	// release outSem so the person gets out of the elevator for every person in elevator
+        ElevatorScene.outSem.get(currFloor).release(ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator)); 
         try {
             threadSleep();
-            ElevatorScene.outSem.get(currFloor).acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+            // acquire outSem back for every person who didn't go out at this floor
+            ElevatorScene.outSem.get(currFloor).acquire(ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        
         threadSleep();
     }
 
     private void letPeopleIntoElevator() {
-
         int numberOfPeopleWaitingAtFloor = ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(currFloor);
-        int numberOfEmptySpacesInElevator = ElevatorScene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(0);
-
+        int numberOfEmptySpacesInElevator = ElevatorScene.maxNumberOfPeopleInElevator - ElevatorScene.scene.getNumberOfPeopleInElevator(numberOfElevator);
+        // release inSem so people can get in the elevator, as many as there is room for/how many are waiting
         ElevatorScene.inSem.get(currFloor).release(min(numberOfEmptySpacesInElevator, numberOfPeopleWaitingAtFloor));
-        threadSleep();
+         threadSleep();
+        
     }
 
     private void threadSleep() {
-
         try {
             Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
         } catch (InterruptedException e) {
@@ -77,11 +99,21 @@ public class Elevator implements Runnable {
         }
     }
 
+    //finding the smaller number
     private int min(int former, int latter) {
         if(former < latter) {
             return former;
         } else {
             return latter;
         }
+    }
+    
+    //finding random bool for isGoingUp
+    private boolean randBool() {
+    	int temp = (int)Math.random() * 1;
+    	if(temp == 1) {
+    		return true;
+    	}
+    	return false;
     }
 }
